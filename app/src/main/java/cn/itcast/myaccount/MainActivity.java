@@ -5,12 +5,10 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -19,20 +17,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import cn.itcast.myaccount.MyData.AccountItem;
+import cn.itcast.myaccount.MyData.DataAccount;
 
 public class MainActivity extends AppCompatActivity {
     private List<AccountItem> accountItems;
 
     private MyRecyclerViewAdapter recyclerViewAdapter;
     public static final int RESULT_CODE_CHANGE_DATA = 1;
+
+    private DataAccount dataAccount;
+
 //    public static final int RESULT_CODE_ADD_DATA = RESULT_CODE_MOD_DATA + 1;
 
 //    int position;
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 String money = data.getStringExtra("money" );
                 int position = data.getIntExtra("position", 0); //accountItems.size() );
                 accountItems.add( position, new AccountItem( Integer.parseInt(money), R.drawable.eat ));// 此处考虑选择三个图片中的某个
-//                dataBank.saveData();
+                dataAccount.saveData();
                 recyclerViewAdapter.notifyItemInserted(position);
 
             }
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 int position = data.getIntExtra( "position", accountItems.size() );
                 accountItems.get(position).setMoney( money );
 
-//                dataBank.saveData();
+                dataAccount.saveData();
 
                 recyclerViewAdapter.notifyItemChanged(position);
             }
@@ -129,13 +131,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initData(){
-//        dataAccount = new DataAccount( MainActivity.this );
-//        accountItems = dataAccoun.loadData();
+        dataAccount = new DataAccount( MainActivity.this );
+        accountItems = dataAccount.loadData();
 
-        accountItems = new ArrayList<AccountItem>();
-        accountItems.add( new AccountItem( 50,R.drawable.day_use ) );
-        accountItems.add( new AccountItem(30,R.drawable.eat ) );
-        accountItems.add( new AccountItem(20,R.drawable.income ) );
+//        accountItems = new ArrayList<AccountItem>();
+//        accountItems.add( new AccountItem( 50,R.drawable.day_use ) );
+//        accountItems.add( new AccountItem(30,R.drawable.eat ) );
+//        accountItems.add( new AccountItem(20,R.drawable.income ) );
     }
 
     private class MyRecyclerViewAdapter extends RecyclerView.Adapter {
@@ -215,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case SWITCH_DEL:
                         accountItems.remove( position );
-//                        dataBank.saveData();
+                        dataAccount.saveData();
                         MyRecyclerViewAdapter.this.notifyItemRemoved( position );
                         break;
                 }
