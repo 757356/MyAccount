@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 String money = data.getStringExtra("money" );
                 int position = data.getIntExtra("position", 0); //accountItems.size() );
-                accountItems.add( position, new AccountItem( Integer.parseInt(money), R.drawable.eat ));// 此处考虑选择三个图片中的某个
+                accountItems.add( position, new AccountItem( Integer.parseInt(money), R.drawable.bill ));// 此处考虑选择三个图片中的某个
                 dataAccount.saveData();
                 recyclerViewAdapter.notifyItemInserted(position);
 
