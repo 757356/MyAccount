@@ -16,11 +16,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewDebug;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     public static final int RESULT_CODE_CHANGE_DATA = 1;
 
     private DataAccount dataAccount;
+
+    public TextView tv_all_money, tv_now_income, tv_now_pay;
 
 //    public static final int RESULT_CODE_ADD_DATA = RESULT_CODE_MOD_DATA + 1;
 
@@ -53,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 int position = data.getIntExtra("position", 0); //accountItems.size() );
                 accountItems.add( position, new AccountItem( Integer.parseInt(money), R.drawable.bill ));// 此处考虑选择三个图片中的某个
                 dataAccount.saveData();
+                updateShowData();
                 recyclerViewAdapter.notifyItemInserted(position);
 
             }
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 accountItems.get(position).setMoney( money );
 
                 dataAccount.saveData();
+                updateShowData();
 
                 recyclerViewAdapter.notifyItemChanged(position);
             }
@@ -84,6 +91,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initData();
+
+        tv_all_money  = findViewById(R.id.all_money);
+        tv_now_income = findViewById(R.id.now_month_income);
+        tv_now_pay    = findViewById(R.id.now_month_pay);
+        updateShowData();
+
+//        tv_all_money.setText("all money");
+//        tv_now_income.setText("income");
+//        tv_now_pay.setText("pay");
 
         FloatingActionButton fabAdd = findViewById( R.id.floating_action_button_add );
         fabAdd.setOnClickListener(new View.OnClickListener() {
@@ -138,6 +154,24 @@ public class MainActivity extends AppCompatActivity {
 //        accountItems.add( new AccountItem( 50,R.drawable.day_use ) );
 //        accountItems.add( new AccountItem(30,R.drawable.eat ) );
 //        accountItems.add( new AccountItem(20,R.drawable.income ) );
+    }
+
+    public void updateShowData() {
+        int sum, income, pay;
+
+        sum = 0; income = 0; pay = 0;
+        for (int i = 0; i < accountItems.size(); ++i) {
+            int tmp = accountItems.get( i ).getMoney();
+            sum += tmp;
+            if (tmp < 0) {
+                pay += tmp;
+            } else {
+                income += tmp;
+            }
+        }
+        tv_all_money.setText(String.valueOf(sum));
+        tv_now_income.setText(String.valueOf(income));
+        tv_now_pay.setText(String.valueOf(pay));
     }
 
     private class MyRecyclerViewAdapter extends RecyclerView.Adapter {
@@ -218,6 +252,7 @@ public class MainActivity extends AppCompatActivity {
                     case SWITCH_DEL:
                         accountItems.remove( position );
                         dataAccount.saveData();
+                        updateShowData();
                         MyRecyclerViewAdapter.this.notifyItemRemoved( position );
                         break;
                 }
